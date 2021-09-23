@@ -26,12 +26,12 @@
             <ul class="navbar-nav navbar-right">
                 <!-- if statement -->
                     <li class="nav-item active">
-                    <% if(showSignInButton) { %>
-                        <a class="btn btn-custom" id="signIn" href="/login" aria-haspopup="true" aria-expanded="false" style="color: #fff;"><i class="fas fa-sign-in-alt"></i> SignIn</a>
-                        <!-- <a class="btn btn-custom" id="signIn" data-toggle="modal" data-target="#loginModal" style="color: #fff;"><i class="fas fa-sign-in-alt"></i> SignIn</a> -->
+                    <% if(!user) { %>
+                        <!-- <a class="btn btn-custom" id="signIn" href="/login" aria-haspopup="true" aria-expanded="false" style="color: #fff;"><i class="fas fa-sign-in-alt"></i> SignIn</a> -->
+                        <a class="btn btn-custom" id="signIn" data-toggle="modal" data-target="#loginModal" style="color: #fff;"><i class="fas fa-sign-in-alt"></i> SignIn</a>
                     </li>
 
-                    <!-- <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                             <div class="modal-header">
@@ -47,12 +47,12 @@
                                 <iframe id="loginFrame" frameborder="0" src="about:blank" data-isloaded="0" ></iframe> 
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                     <% } else { %>
                     <li class="nav-item active">
                         <div class="dropdown show">
                             <a class="btn btn-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user" aria-hidden="true"></i> <%= username %>
+                                <i class="fas fa-user" aria-hidden="true"></i> <%= user.username %>
                             </a>
                           
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -72,45 +72,45 @@
     <div class="container">
         <div class="jumbotron text-center">
             <h1><span class="fas fa-lock"></span> B2C MSAL Application</h1>
-              <% if(showSignInButton) { %>
+              <% if(!user) { %>
                 <p>Login with B2C using MSAL-Node</p>
               <% } else { %>
-                <h3>Welcome <%= username %> !</h3>
+                <h3>Welcome <%= user.username %> !</h3>
               <% } %>
         </div>
 
         <div class="row">
           <div class="col-sm-6">
             <div class="well">
-              <% if(username) { %>
-                 <h3><span class="fas fa-user"></span> <%= username %></h3> 
+              <% if(user) { %>
+                 <h3><span class="fas fa-user"></span> <%= user.username %></h3> 
                  <div class="container profile-container">
                    <table class="table">
                      <tr>
-                       <td>Name: <%= idToken.given_name + " " + idToken.family_name %></td>
+                       <td>Name: <%= user.idToken.given_name + " " + user.idToken.family_name %></td>
                      </tr>
                      <tr>
-                        <td>UserId: <%= idToken.oid %></td>
+                        <td>UserId: <%= user.idToken.oid %></td>
                      </tr>
                      <tr>
-                        <td>DisplayName: <%= idToken.name %></td>
+                        <td>DisplayName: <%= user.idToken.name %></td>
                      </tr>
                    </table>
                    <hr style="background-color: white;">
                    <a class="btn profileEdit-btn" href="/profileEdit" ><i class="fas fa-pencil-alt"></i> Edit Profile</a>
                    <a class="btn profileEdit-btn" href="/resetPassword"><i class="fas fa-key" aria-hidden="true"></i> Reset Password</a>
                  </div>
-                 <% } %>
+              <% } %>
             </div>
           </div>
         </div>
     </div>
 
   <div class="footer">
-    <p>B2C MSAL WebApp - MSAL.js Application</p>
+    <p>B2C MSAL WebApp - MSAL-NODE Application</p>
   </div>
 
-  <!-- Bootstrap/jQuery -->
+    <!-- Bootstrap/jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -122,16 +122,28 @@
             $("#loginModal").modal("show");
             $('#loginFrame').on('load', function () {
                 $('#loader1').hide();
-                console.log($(this).attr('src'));
             });
-            $('#loginFrame').attr('src', '/login/?p=B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN');
+            $('#loginFrame').attr('src', '/login');
         });
     </script>
 
     <!-- Because the authorization flow happens inside the iframe, we need to reload the main page.-->
+    <!-- <script>
+      if (document.referrer.startsWith('https://login.thegamesstore.in/loader')) {
+        window.top.location.reload();
+      }        
+    </script> -->
+
+
     <script>
-        if (document.referrer.startsWith('https://login.thegamesstore.in/'))
-            window.top.location.reload();
+      var iframe = document.getElementById('loginFrame');
+      iframe.onload = function() {
+        var iframeBody = this.contentDocument.body;
+        if(iframeBody) {
+          window.top.location.reload();
+        }
+      }
     </script>
+
   </body>
 </html>

@@ -21,14 +21,8 @@ const confidentialClientConfig = {
         authority: policies.authorities.signUpSignIn.authority,
         clientSecret: "zYMQyDJBV_~J819g27B.f.r1q38-mAZ1co",
         knownAuthorities: [policies.authorityDomain],
-        //redirectUri: "https://app3.thegamesstore.in/redirect",
-        redirectUri: "http://localhost:5001/redirect",
-        postLogoutRedirectUri: 'https://localhost:5001/'
+        redirectUri: "https://app3.thegamesstore.in/redirect",
     },
-    cache: {
-		cacheLocation: 'localStorage',
-		storeAuthStateInCookie: false,
-	},
     system: {
         loggerOptions: {
             loggerCallback(loglevel, message, containsPii) {
@@ -61,7 +55,6 @@ const tokenRequest = {
 
 // Initialize MSAL Node.
 const confidentialClientApp = new msal.ConfidentialClientApplication(confidentialClientConfig);
-console.log(confidentialClientApp);
 
 app.locals.accessToken = null;
 
@@ -107,11 +100,14 @@ const getAuthCode = (authority, scopes, state, res) => {
         });
 }
 
-
 /** App Routes */
 app.get('/', (req, res) => {
-    const templateParams = { showSignInButton: true , username: null};
-    res.render('index', templateParams);
+    
+    console.log(`Session in Root: ${JSON.stringify(req.session.templateParams)}`);
+    const user = req.session.templateParams;
+    console.log(`User: ${JSON.stringify(user)}`);
+    //res.render('index', templateParams);
+    res.render('index', {user: user});
 });
 
 //Initiates the auth code grant flow for login
@@ -144,9 +140,12 @@ app.get('/redirect', (req, res) => {
 
         confidentialClientApp.acquireTokenByCode(tokenRequest)
             .then((response) => {
-                const templateParams = { showSignInButton: false, username: response.account.name, profile: true, idToken: response.account.idTokenClaims };
-                console.log(`TemplateParams: ${JSON.stringify(templateParams)}`);
-                res.render('index', templateParams);
+                //const templateParams = { showSignInButton: false, username: response.account.name, profile: true, idToken: response.account.idTokenClaims };
+                //console.log(`TemplateParams: ${JSON.stringify(templateParams)}`);
+                req.session.templateParams = { username: response.account.name, profile: true, idToken: response.account.idTokenClaims};
+                const user = req.session.templateParams;
+                console.log(`User Details in Redirect: ${JSON.stringify(user)}`);
+                res.render('loader', {user: user});
             }).catch((error) => {
                 if(req.query.error) {
                     /**
@@ -161,7 +160,7 @@ app.get('/redirect', (req, res) => {
                    } 
                 }
                 res.status(500).send(error);
-            });
+            });  
     } 
 });
 
