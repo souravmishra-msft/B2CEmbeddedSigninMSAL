@@ -14,14 +14,15 @@ const { render } = require('ejs');
 const app = express();
 const PORT = process.env.PORT;
 
+const redirectUri = "https://<domain-name>/redirect";
+
 /** MSAL Config */
 const confidentialClientConfig = {
     auth: {
-        clientId: "9cecd5f5-e0a0-4fd4-9d32-6ceceb941472",
+        clientId: "client-id",
         authority: policies.authorities.signUpSignIn.authority,
-        clientSecret: "zYMQyDJBV_~J819g27B.f.r1q38-mAZ1co",
+        clientSecret: "client-secret",
         knownAuthorities: [policies.authorityDomain],
-        redirectUri: "https://app3.thegamesstore.in/redirect",
     },
     system: {
         loggerOptions: {
@@ -46,12 +47,13 @@ const APP_STATES = {
 }
 
 const authCodeRequest = {
-    redirectUri: confidentialClientConfig.auth.redirectUri,
+    redirectUri: redirectUri,
 };
 
 const tokenRequest = {
-    redirectUri: confidentialClientConfig.auth.redirectUri,
+    redirectUri: redirectUri,
 };
+
 
 // Initialize MSAL Node.
 const confidentialClientApp = new msal.ConfidentialClientApplication(confidentialClientConfig);
@@ -143,6 +145,8 @@ app.get('/redirect', (req, res) => {
                 //const templateParams = { showSignInButton: false, username: response.account.name, profile: true, idToken: response.account.idTokenClaims };
                 //console.log(`TemplateParams: ${JSON.stringify(templateParams)}`);
                 req.session.templateParams = { username: response.account.name, profile: true, idToken: response.account.idTokenClaims};
+                req.session.homeAccountId = response.account.homeAccountId;
+                console.log(req.session.homeAccountId);
                 const user = req.session.templateParams;
                 console.log(`User Details in Redirect: ${JSON.stringify(user)}`);
                 res.render('loader', {user: user});
@@ -174,7 +178,10 @@ app.get('/redirect', (req, res) => {
  */
 
 app.get('/logout', (req, res) => {
-    
+    logoutUri = policies.destroySessionUrl;
+    req.session.destroy(() => {
+        res.redirect(logoutUri);
+    })
 });
 
 

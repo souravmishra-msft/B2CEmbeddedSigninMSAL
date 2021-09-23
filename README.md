@@ -14,22 +14,37 @@ endpoint: Microsoft Identity Platform
 
 This sample shows how to build a NodeJS Express Web app that uses [MSAL-Node](https://www.npmjs.com/package/@azure/msal-node) to implement OpenID Connect to sign in users in **Azure AD B2C** using the embedded sign-in experience. It assumes you have some familiarity with **Azure AD B2C**. If you'd like to learn all that B2C has to offer, start with our documentation at [https://aka.ms/aadb2c](https://aka.ms/aadb2c).
 
-![Sign in with Azure AD](ReadmeFiles/sign-in.png)
-
 Try out the working sample: [B2C-MSAL App](https://app3.thegamesstore.in/)
+
+This sample demonstrates a [confidential client application](../../../lib/msal-node/docs/initialize-confidential-client-application.md) registered on Azure AD B2C. It uses:
+
+1. [OIDC Connect protocol](https://docs.microsoft.com/azure/active-directory-b2c/openid-connect) to implement standard B2C [Custom Policies](https://docs.microsoft.com/en-us/azure/active-directory-b2c/custom-policy-overview) to:
+
+    - sign-up/sign-in a user
+    - reset/recover a user password
+    - edit a user profile
+
+2. [Authorization code grant](https://docs.microsoft.com/azure/active-directory-b2c/authorization-code-flow) to acquire an [Access Token](https://docs.microsoft.com/azure/active-directory-b2c/tokens-overview) to call a [protected web API](https://docs.microsoft.com/azure/active-directory-b2c/add-web-api-application?tabs=app-reg-ga) (also on Azure AD B2C)
+
+## Registration
+
+1. [Create an Azure Active Directory B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-tenant)
+2. [Register a web application in Azure Active Directory B2C](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-register-applications?tabs=app-reg-ga)
+3. Use the Custom Policies from the `policies` folder.
+
 
 ### Step 1: Clone or download this repository
 
 From your shell or command line:
 
 ```powershell
-git clone https://github.com/techjazz-MS/B2C_EmbeddedSignin_nodejs_passportjs_Sample.git
+git clone https://github.com/souravmishra-msft/B2CEmbeddedSigninMSAL.git
 ```
 
-Navigate to the `"B2C_EmbeddedSignin_nodejs_passportjs_Sample-main"` folder
+Navigate to the `"B2CEmbeddedSigninMSAL-main"` folder
 
  ```Sh
-  cd "B2C_EmbeddedSignin_nodejs_passportjs_Sample-main"
+  cd "B2CEmbeddedSigninMSAL-main"
   ```
 
 ### Step 2: Download node.js for your platform
