@@ -163,7 +163,7 @@ Your web application registration should include the following information:
 Blocked autofocusing on a <input> element in a cross-origin subframe.
 ```
 
-### Step 8: Run the sample
+### Step 9: Run the sample
 
 1. To locally run the sample, you can use `npm run start` or in dev environment you can use `npm run start-dev`.
 1. You can also upload this sample as an App Service and configure the App Service to use HTTPS.
