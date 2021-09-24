@@ -105,31 +105,57 @@ Your web application registration should include the following information:
 - Set the **Reply URL** to `https://www.yourcustomdomain.com/auth/openid/return`.
 - Copy the Application ID generated for your application, so you can use it in the next step.
 
-### Step 6: Configure the sample with your app coordinates
+### Step 8: Configure the sample with your app coordinates
 
 1. Open the sample in Visual Studio Code.
-1. Open the `config/config.js` file.
-1. Provide the parameters in `exports.creds` in config.js as instructed.
-1. Find the instances of `yourcustomdomain.com` and replace the value with your Azure AD B2C domain name. For example, `constoso.com`
-1. Find the assignment for `client_id` and replace the value with the Application ID from Step 4.
+1. In `policies.js`, we create a `b2cPolicies` object to store authority strings for initiating each user-flow. The object may look like the following:
 
+  ```javascript
+  const b2cPolicies = {
+    names: {
+        signUpSignIn: "B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN",
+        resetPassword: "B2C_1A_EMBEDDEDSIGNIN_PASSWORDRESET",
+        editprofile: "B2C_1A_EMBEDDEDSIGNIN_PROFILEEDIT",
+    },
+    authorities: {
+        signUpSignIn: {
+            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN",
+        },
+        resetPassword: {
+            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_PASSWORDRESET",
+        },
+        editprofile: {
+            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_PROFILEEDIT",
+        },
+    },
+    authorityDomain: "yourcustomdomain.com",
+    destroySessionUrl: "https://login.yourcustomdomain.com/yourcustomdomain.com/oauth2/v2.0/logout?p=B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN" + "&post_logout_redirect_uri=https://yourcustomdomain.com/"
+}
+```
+3. In `index.js` (can be found inside the `config` folder), we setup the configuration object expected by MSAL Node `confidentialClientApplication` class constructor:
 
-### Step 7 : Customize the View Components
-
-Update the index.ejs file.
-1. Open the `views/index.ejs` file.
-1. Update the following lines with the name of your custom policy names.
-    * Update this line with your PasswordReset policy name: `<a class="dropdown-item" href="/login/?p=B2C_1A_PasswordReset"><i class="fas fa-key"></i> Reset Password</a>`
-    * Update this line with your SignUpSignIn policy name: `$('#loginFrame').attr('src', '/login/?p=B2C_1A_signup_signin');`
-
-Update the profile.ejs file
-1. Open the `views/profile.ejs` file.
-1. Update the following lines with the name of your custom policy names.
-    * Update this line with your SignIn Button policy name: `<a class="btn btn-custom" href="/login/?p=B2C_1A_signup_signin" id="signIn" style="color: rgb(240, 238, 235);"><i class="fas fa-sign-in-alt"></i> SignIn</a>`
-    * Update this line with your PasswordReset policy name: `<a class="dropdown-item" href="/login/?p=B2C_1A_PasswordReset_EmbeddedSignin"><i class="fas fa-key" aria-hidden="true"></i> Reset Password</a>`
-    * Also update the following lines with the PasswordReset and ProfileEdit policiy names: `<a class="btn profileEdit-btn" href="/login/?p=B2C_1A_ProfileEdit_EmbeddedSignin" ><i class="fas fa-pencil-alt"></i> Edit Profile</a>`
-    `<a class="btn profileEdit-btn" href="/login/?p=B2C_1A_PasswordReset_EmbeddedSignin"><i class="fas fa-key" aria-hidden="true"></i> Reset Password</a>`
-
+  ```javascript
+  const confidentialClientConfig = {
+      auth: {
+          clientId: "ENTER_CLIENT_ID",
+          authority: policies.authorities.signUpSignIn.authority, //signUpSignIn policy is our default authority
+          clientSecret: "ENTER_CLIENT_SECRET",
+          knownAuthorities: [policies.authorityDomain], // mark your tenant's custom domain as a trusted authority
+          redirectUri: "http://localhost:3000/redirect",
+      },
+      system: {
+          loggerOptions: {
+              loggerCallback(loglevel, message, containsPii) {
+                  console.log(message);
+              },
+              piiLoggingEnabled: false,
+              logLevel: msal.LogLevel.Verbose,
+          }
+      }
+  };
+  ```
+4. Find the instances of `yourcustomdomain.com` and replace the value with your Azure AD B2C domain name. For example, `constoso.com`
+5. Find the assignment for `ENTER_CLIENT_ID` and replace the value with the Application ID from Step 4.
 
 >Note: You may find a JavaScript error `Blocked autofocusing on a <input> element in a cross-origin subframe.` in your browser's console. This is because the default behavior of the sign-in experience attempts to focus the user input on the first available user input in the sign-in page, which is not allowed inside an iframe for security reasons. You may want to attempt to override this behavior in your custom UI.
 
@@ -139,7 +165,7 @@ Blocked autofocusing on a <input> element in a cross-origin subframe.
 
 ### Step 8: Run the sample
 
-1. To locally run the sample, you can use `npm run start`.
+1. To locally run the sample, you can use `npm run start` or in dev environment you can use `npm run start-dev`.
 1. You can also upload this sample as an App Service and configure the App Service to use HTTPS.
 1. If you don't have an account registered on the **Azure AD B2C** used in this sample, follow the sign up process. Otherwise, input the email and password for your account and click on **Sign in**.
 
@@ -181,7 +207,7 @@ We need to show the modal dialog which contains the iframe when the sign-in butt
             $('#loginFrame').on('load', function () {
                 $('#loader1').hide();
             });
-            $('#loginFrame').attr('src', '/login/?p=B2C_1A_signup_signin');
+            $('#loginFrame').attr('src', '/login');
         });
     </script>
 ```
@@ -192,10 +218,15 @@ Because all the login experience and redirects happen inside the iframe, we need
 
 ```html
 <!-- Because the authorization flow happens inside the iframe, we need to reload the main page.-->
-<script>
-  if (document.referrer.startsWith('https://login.yourcustomdomain.com/'))
-    window.top.location.reload();
-</script>
+  <script>
+    var iframe = document.getElementById('loginFrame');
+    iframe.onload = function() {
+      var iframeBody = this.contentDocument.body;
+      if(iframeBody) {
+        window.top.location.reload();
+      }
+    }
+  </script>
 ```
 
 >Note: There are other alternatives here which we can do to accomplish the same logic, one being creating your own SignIn action which includes generating your own sign-in challenge and using the *state* parameter of the sign-in request using OpenIdConnect Events to indicate the redirect url. However, for the purposes of demo, this JavaScript snippet will do.

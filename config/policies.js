@@ -6,17 +6,17 @@ const b2cPolicies = {
     },
     authorities: {
         signUpSignIn: {
-            authority: "https://<custom-domain-name>/<domain-name>/B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN",
+            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN",
         },
         resetPassword: {
-            authority: "https://<custom-domain-name>/<domain-name>/B2C_1A_EMBEDDEDSIGNIN_PASSWORDRESET",
+            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_PASSWORDRESET",
         },
         editprofile: {
-            authority: "https://<custom-domain-name>/<domain-name>/B2C_1A_EMBEDDEDSIGNIN_PROFILEEDIT",
+            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_PROFILEEDIT",
         },
     },
-    authorityDomain: "<custom-domain-name>",
-    destroySessionUrl: "https://<custom-domain-name>/<domain-name>/oauth2/v2.0/logout?p=B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN" + "&post_logout_redirect_uri=https://<domain-name>/"
+    authorityDomain: "yourcustomdomain.com",
+    destroySessionUrl: "https://login.yourcustomdomain.com/yourcustomdomain.com/oauth2/v2.0/logout?p=B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN" + "&post_logout_redirect_uri=https://yourcustomdomain.com/"
 }
 
 module.exports = b2cPolicies;

@@ -19,10 +19,11 @@ const redirectUri = "https://<domain-name>/redirect";
 /** MSAL Config */
 const confidentialClientConfig = {
     auth: {
-        clientId: "client-id",
-        authority: policies.authorities.signUpSignIn.authority,
-        clientSecret: "client-secret",
-        knownAuthorities: [policies.authorityDomain],
+          clientId: "ENTER_CLIENT_ID",
+          authority: policies.authorities.signUpSignIn.authority, //signUpSignIn policy is our default authority
+          clientSecret: "ENTER_CLIENT_SECRET",
+          knownAuthorities: [policies.authorityDomain], // mark your tenant's custom domain as a trusted authority
+          redirectUri: "http://localhost:3000/redirect",
     },
     system: {
         loggerOptions: {
