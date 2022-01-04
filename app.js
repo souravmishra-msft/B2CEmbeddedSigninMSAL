@@ -14,16 +14,14 @@ const { render } = require('ejs');
 const app = express();
 const PORT = process.env.PORT;
 
-const redirectUri = "https://<domain-name>/redirect";
-
+const redirectUri = "https://app3.thegamesstore.in/redirect";
 /** MSAL Config */
 const confidentialClientConfig = {
     auth: {
-          clientId: "ENTER_CLIENT_ID",
-          authority: policies.authorities.signUpSignIn.authority, //signUpSignIn policy is our default authority
-          clientSecret: "ENTER_CLIENT_SECRET",
-          knownAuthorities: [policies.authorityDomain], // mark your tenant's custom domain as a trusted authority
-          redirectUri: "http://localhost:3000/redirect",
+        clientId: "9cecd5f5-e0a0-4fd4-9d32-6ceceb941472",
+        authority: policies.authorities.signUpSignIn.authority,
+        clientSecret: "zYMQyDJBV_~J819g27B.f.r1q38-mAZ1co",
+        knownAuthorities: [policies.authorityDomain],
     },
     system: {
         loggerOptions: {

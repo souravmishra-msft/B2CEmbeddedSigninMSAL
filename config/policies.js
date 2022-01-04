@@ -6,17 +6,17 @@ const b2cPolicies = {
     },
     authorities: {
         signUpSignIn: {
-            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN",
+            authority: "https://login.thegamesstore.in/thegamesstore.in/B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN",
         },
         resetPassword: {
-            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_PASSWORDRESET",
+            authority: "https://login.thegamesstore.in/thegamesstore.in/B2C_1A_EMBEDDEDSIGNIN_PASSWORDRESET",
         },
         editprofile: {
-            authority: "https://login.yourcustomdomain.com/yourcustomdomain.com/B2C_1A_EMBEDDEDSIGNIN_PROFILEEDIT",
+            authority: "https://login.thegamesstore.in/thegamesstore.in/B2C_1A_EMBEDDEDSIGNIN_PROFILEEDIT",
         },
     },
-    authorityDomain: "yourcustomdomain.com",
-    destroySessionUrl: "https://login.yourcustomdomain.com/yourcustomdomain.com/oauth2/v2.0/logout?p=B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN" + "&post_logout_redirect_uri=https://yourcustomdomain.com/"
+    authorityDomain: "login.thegamesstore.in",
+    destroySessionUrl: "https://login.thegamesstore.in/thegamesstore.in/oauth2/v2.0/logout?p=B2C_1A_EMBEDDEDSIGNIN_SIGNUP_SIGNIN" + "&post_logout_redirect_uri=https://app3.thegamesstore.in/"
 }
 
 module.exports = b2cPolicies;
